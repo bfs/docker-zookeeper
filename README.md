@@ -37,5 +37,5 @@ docker run -d -v /disk2/zookeeper/data-log/:/data-log --name zookeeper-data-log 
 ## Starting with Data Containers
 
 ```bash
-docker run --name zookeeper -p 2181:2181 -p 2888:2888 -p 3888:3888 -e ZK_SERVER_ID=1 -e HOSTS=ops100,ops110,ops120 -m 2g --volumes-from zookeeper-data --volumes-from zookeeper-data-log boritzio/docker-zookeeper
+docker run -e ZK_SERVER_ID=1 --restart=on-failure:10 --name zookeeper -p 2181:2181 -p 2888:2888 -p 3888:3888 -e HOSTS=ops100,ops110,ops120 -m 2g --volumes-from zookeeper-data --volumes-from zookeeper-data-log boritzio/docker-zookeeper
 ```

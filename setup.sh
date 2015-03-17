@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+
 #default
 HOSTS=${HOSTS:-"localhost"}
 
@@ -40,8 +42,6 @@ done
 
 
 #-------start zookeeper-----------#
-touch $ZOOKEEPER_DATA_PATH/here
-touch $ZOOKEEPER_DATA_LOG_PATH/there
 
 
 /usr/bin/java -cp \

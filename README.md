@@ -14,6 +14,19 @@ ZK_CLIENT_PORT #default 2181
 ZK_PEER_PORT #default 2888
 ZK_ELECTION_PORT #default 3888
 
+ZK_MAX_CLIENT_CONNECTIONS #default 50
+ZK_TICK_TIME #default 2000
+ZK_SYNC_LIMIT #default 5
+
+ZK_DATA_DIR #default /data
+ZK_SECRETS_PATH #default /secrets
+
+#optional if using kerberos
+KERBEROS_KEYTAB_FILE #default zookeeper.keytab
+KERBEROS_PRINCIPAL #should be set to enable SASL and kerberos settings
+
+DEBUG_CONFIG # set this to print the generated configs
+
 ```
 
 ### Volumes

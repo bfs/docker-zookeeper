@@ -9,35 +9,66 @@ HOSTS=${HOSTS:-"localhost"}
 #read HOSTS into HOSTS_ARRAY
 IFS=', ' read -a HOSTS_ARRAY <<< "$HOSTS"
 
-
-#config paths
-ZOOKEEPER_CONF_PATH="/etc/zookeeper/conf"
+#-------zookeeper config----------#
+export ZOOCFGDIR="/etc/zookeeper/conf"
 
 #data paths
-ZOOKEEPER_DATA_PATH=${ZOOKEEPER_DATA_PATH:-"/data"}
-ZOOKEEPER_DATA_LOG_DIR=${ZOOKEEPER_DATA_LOG_DIR:-"/data-log"}
+export ZK_DATA_DIR=${ZK_DATA_DIR:-"/data"}
+export ZK_DATA_LOG_DIR=${ZK_DATA_LOG_DIR:-"/data-log"}
 
-mkdir -p $ZOOKEEPER_DATA_PATH
-mkdir -p $ZOOKEEPER_DATA_LOG_DIR
+#secrets path
+export ZK_SECRETS_PATH=${ZK_SECRETS_PATH:-"/secrets"}
 
-#-------zookeeper config----------#
+#connection settings
+export ZK_MAX_CLIENT_CONNECTIONS=${ZK_MAX_CLIENT_CONNECTIONS:-"50"}
+export ZK_TICK_TIME=${ZK_TICK_TIME:-"2000"}
+export ZK_SYNC_LIMIT=${ZK_SYNC_LIMIT:-"5"}
+export ZK_INIT_LIMIT=${ZK_INIT_LIMIT:-"10"}
 
-ZK_CLIENT_PORT=${ZK_CLIENT_PORT:-"2181"}
-ZK_PEER_PORT=${ZK_PEER_PORT:-"2888"}
-ZK_ELECTION_PORT=${ZK_ELECTION_PORT:-"3888"}
-
-echo $ZK_SERVER_ID > $ZOOKEEPER_CONF_PATH/myid
-cp $ZOOKEEPER_CONF_PATH/myid $ZOOKEEPER_DATA_PATH/myid
-
-echo "dataDir=$ZOOKEEPER_DATA_PATH" >> $ZOOKEEPER_CONF_PATH/zoo.cfg
-echo "dataLogDir=$ZOOKEEPER_DATA_LOG_DIR" >> $ZOOKEEPER_CONF_PATH/zoo.cfg
+#KERBEROS_SETTINGS
+export KERBEROS_KEYTAB_FILE=${KEBEROS_KEYTAB_FILE:-"zookeeper.keytab"}
 
 
-echo "clientPort=$ZK_CLIENT_PORT" >> $ZOOKEEPER_CONF_PATH/zoo.cfg
+mkdir -p $ZK_DATA_DIR
+mkdir -p $ZK_DATA_LOG_DIR
+mkdir -p $ZK_SECRETS_PATH
+
+
+
+export ZK_CLIENT_PORT=${ZK_CLIENT_PORT:-"2181"}
+export ZK_PEER_PORT=${ZK_PEER_PORT:-"2888"}
+export ZK_ELECTION_PORT=${ZK_ELECTION_PORT:-"3888"}
+
+echo $ZK_SERVER_ID > $ZOOCFGDIR/myid
+cp $ZOOCFGDIR/myid $ZK_DATA_DIR/myid
+
+cat /tmp/zoo.cfg | mo > $ZOOCFGDIR/zoo.cfg
+
 for i in "${!HOSTS_ARRAY[@]}"; do 
-  echo "server.$(($i+1))=${HOSTS_ARRAY[$i]}:$ZK_PEER_PORT:$ZK_ELECTION_PORT" >> $ZOOKEEPER_CONF_PATH/zoo.cfg
+  echo "server.$(($i+1))=${HOSTS_ARRAY[$i]}:$ZK_PEER_PORT:$ZK_ELECTION_PORT" >> $ZOOCFGDIR/zoo.cfg
 done
 
+
+if [ -n "$KERBEROS_PRINCIPAL" ]; then  
+
+  echo "export JVMFLAGS=\"-Djava.security.auth.login.config=$ZOOCFGDIR/jaas.conf\"" > $ZOOCFGDIR/java.env
+
+  echo "
+ 
+#SASL Settings
+authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider
+jaasLoginRenew=3600000
+kerberos.removeHostFromPrincipal=true
+kerberos.removeRealmFromPrincipal=true
+  
+" >> $ZOOCFGDIR/zoo.cfg 
+
+  cat /tmp/jaas.conf | mo > /etc/zookeeper/conf/jaas.conf
+fi
+
+if [ -n "$DEBUG_CONFIG" ]; then
+  tail -n+1 $ZOOCFGDIR/*
+fi
 #---------------------------------#
 
 

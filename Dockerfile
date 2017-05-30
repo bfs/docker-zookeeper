@@ -1,6 +1,6 @@
 FROM boritzio/docker-base-java
 
-RUN apt-get update && apt-get install -y zookeeper
+RUN apt-get update && apt-get install -y zookeeper=3.4.*
 
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

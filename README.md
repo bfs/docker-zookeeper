@@ -25,6 +25,9 @@ ZK_SECRETS_PATH #default /secrets
 KERBEROS_KEYTAB_FILE #default zookeeper.keytab
 KERBEROS_PRINCIPAL #should be set to enable SASL and kerberos settings
 
+#optional java options (-Xmx, -Xms, etc)
+JAVA_OPTIONS
+
 DEBUG_CONFIG # set this to print the generated configs
 
 ```

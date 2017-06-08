@@ -28,6 +28,9 @@ export ZK_INIT_LIMIT=${ZK_INIT_LIMIT:-"10"}
 #KERBEROS_SETTINGS
 export KERBEROS_KEYTAB_FILE=${KEBEROS_KEYTAB_FILE:-"zookeeper.keytab"}
 
+# JVM options
+export JAVA_OPTIONS=${JAVA_OPTIONS:-}
+
 
 mkdir -p $ZK_DATA_DIR
 mkdir -p $ZK_DATA_LOG_DIR
@@ -77,6 +80,7 @@ fi
 
 /usr/bin/java -cp \
   /etc/zookeeper/conf:/usr/share/java/jline.jar:/usr/share/java/log4j-1.2.jar:/usr/share/java/xercesImpl.jar:/usr/share/java/xmlParserAPIs.jar:/usr/share/java/netty.jar:/usr/share/java/slf4j-api.jar:/usr/share/java/slf4j-log4j12.jar:/usr/share/java/zookeeper.jar \
+  $JAVA_OPTIONS \
   -Dcom.sun.management.jmxremote \
   -Dcom.sun.management.jmxremote.local.only=false \
   -Dzookeeper.root.logger=INFO,CONSOLE \

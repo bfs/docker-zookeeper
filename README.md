@@ -17,8 +17,13 @@ ZK_ELECTION_PORT #default 3888
 ZK_MAX_CLIENT_CONNECTIONS #default 50
 ZK_TICK_TIME #default 2000
 ZK_SYNC_LIMIT #default 5
+ZK_INIT_LIMIT #default 10
+
+ZK_AUTOPURGE_SNAP_RETAIN_COUNT #default 3
+ZK_AUTOPURGE_PURGE_INTERVAL #default 0
 
 ZK_DATA_DIR #default /data
+ZK_DATA_LOG_DIR #default /data-log
 ZK_SECRETS_PATH #default /secrets
 
 #optional if using kerberos
